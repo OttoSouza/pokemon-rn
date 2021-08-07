@@ -1,8 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { View } from "react-native";
-import { useRoute, useNavigation } from "@react-navigation/native";
-import Icon from "@expo/vector-icons/MaterialIcons";
-import { IPokemonsProps } from "../../interface";
 
 import {
   Container,
@@ -25,43 +21,34 @@ import {
   AboutName,
   AboutInfo,
 } from "./styles";
-import Tag from "../../components/Tag";
+
+import { useRoute, useNavigation } from "@react-navigation/native";
+import { Alert, View } from "react-native";
+import { StatComponent } from "../../components/PokemonDetails/Stat/index";
+import Icon from "@expo/vector-icons/MaterialIcons";
+import { Tag } from "../../components/Tag";
+import {
+  ERROR_LOADING_ABILITIES,
+  ERROR_LOADING_SOME_EXTRA_INFORMATIONS,
+  ERROR_LOADING_STAT,
+} from "../../Errors/messages";
+import {
+  IDetailsStatsProps,
+  IDetailsAbilitiesProps,
+  IDetailsMoreInfoProps,
+  IDetailsRouterProps,
+} from "../../interface/IDetailsPokemonProps";
 import { leftZeros } from "../../utils/leftZeros";
 import { api } from "../../services/api";
-import { StatComponent } from "../../components/PokemonDetails/Stat/index";
-
-interface Props {
-  pokemon: IPokemonsProps;
-  imageUrl: string;
-  getHexColor: string;
-  types: string[];
-}
-
-interface StatsProps {
-  base_stat: number;
-  stat: {
-    name: string;
-  };
-}
-
-interface AbilitiesProps {
-  ability: {
-    name: string;
-  };
-}
-
-interface MoreInfoProps {
-  height: number;
-  weight: number;
-}
 
 const Details: React.FC = () => {
   const routes = useRoute();
-  const [stats, setStats] = useState<StatsProps[]>([]);
-  const [ability, setAbility] = useState<AbilitiesProps[]>([]);
-  const [moreInfo, setMoreInfo] = useState<MoreInfoProps[]>([]);
-  const { pokemon, imageUrl, getHexColor, types } = routes.params as Props;
+  const [stats, setStats] = useState<IDetailsStatsProps[]>([]);
+  const [ability, setAbility] = useState<IDetailsAbilitiesProps[]>([]);
+  const [moreInfo, setMoreInfo] = useState<IDetailsMoreInfoProps[]>([]);
   const [active, setActive] = useState(false);
+  const { pokemon, imageUrl, getHexColor, types } =
+    routes.params as IDetailsRouterProps;
   const abilityNames = ability.map((item) => item.ability.name + ". ");
 
   const [typeMenu, setTypeMenu] = useState<"about" | "base">();
@@ -72,34 +59,49 @@ const Details: React.FC = () => {
   }
 
   const loadPokemonStats = async () => {
-    const response = await api.get(`pokemon/${pokemon.pokemonNumberUrl}`);
-    const data = await response.data.stats.map((item: StatsProps) => {
-      return {
-        base_stat: item.base_stat,
-        stat: {
-          name: item.stat.name,
-        },
-      };
-    });
-    setStats(data);
+    try {
+      const response = await api.get(`pokemon/${pokemon.pokemonNumberUrl}`);
+      const data = await response.data.stats.map((item: IDetailsStatsProps) => {
+        return {
+          base_stat: item.base_stat,
+          stat: {
+            name: item.stat.name,
+          },
+        };
+      });
+      setStats(data);
+    } catch (error) {
+      Alert.alert(`${ERROR_LOADING_STAT}`);
+    }
   };
 
   const loadPokemonAbility = async () => {
-    const response = await api.get(`pokemon/${pokemon.pokemonNumberUrl}`);
-    const data = await response.data.abilities.map((item: AbilitiesProps) => {
-      return {
-        ability: {
-          name: item.ability.name,
-        },
-      };
-    });
-    setAbility(data);
+    try {
+      const response = await api.get(`pokemon/${pokemon.pokemonNumberUrl}`);
+      const data = await response.data.abilities.map(
+        (item: IDetailsAbilitiesProps) => {
+          return {
+            ability: {
+              name: item.ability.name,
+            },
+          };
+        }
+      );
+      setAbility(data);
+    } catch (error) {
+      Alert.alert(`${ERROR_LOADING_ABILITIES}`);
+    }
   };
+
   const loadPokemonMoreInformations = async () => {
-    const response = await api.get(`pokemon/${pokemon.pokemonNumberUrl}`);
-    const height = await response.data.height;
-    const weight = await response.data.weight;
-    setMoreInfo([{ height, weight }]);
+    try {
+      const response = await api.get(`pokemon/${pokemon.pokemonNumberUrl}`);
+      const height = await response.data.height;
+      const weight = await response.data.weight;
+      setMoreInfo([{ height, weight }]);
+    } catch (error) {
+      Alert.alert(`${ERROR_LOADING_SOME_EXTRA_INFORMATIONS}`);
+    }
   };
 
   useEffect(() => {

@@ -1,14 +1,10 @@
 import React from "react";
 import * as Progress from "react-native-progress";
+import { IStatProps } from "../../../interface/IAbilitiesPokemonProps";
 import { randomColors } from "../../../utils/leftZeros";
-import { StatContainer, StatContent, StatName, StatPercent } from "./styles";
+import { StatContent, StatName, StatPercent } from "./styles";
 
-interface Props {
-  base_stat: number;
-  name: string;
-}
-
-export const StatComponent: React.FC<Props> = ({ name, base_stat }) => {
+export const StatComponent: React.FC<IStatProps> = ({ name, base_stat }) => {
   return (
     <>
       <StatContent>

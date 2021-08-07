@@ -1,8 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { View, Text } from "react-native";
-import Tag from "../Tag";
-import { Dimensions } from "react-native";
-import { api } from "../../services/api";
+import React, { useEffect, useState } from "react";
 import {
   Container,
   Content,
@@ -13,21 +9,23 @@ import {
   PokemonImage,
   TypesContainer,
 } from "./styles";
-import { useTheme } from "styled-components/native";
-import { leftZeros } from "../../utils/leftZeros";
-import { IPokemonsProps } from "../../interface";
+import { Tag } from "../Tag";
 import { useNavigation } from "@react-navigation/native";
+import { ICardProps, IPokemonsProps } from "../../interface/IPokemonsProps";
+import { Alert } from "react-native";
+import { ERROR_LOADING_TYPES } from "../../Errors/messages";
+import { api } from "../../services/api";
+import { leftZeros } from "../../utils/leftZeros";
+import { getAllBackgroundByTypes } from "../../utils/getAllBackgroundByType";
 
-interface Props {
-  pokemon: IPokemonsProps;
-}
-
-const Card: React.FC<Props> = ({ pokemon }) => {
-  const { backgroundColors } = useTheme();
+export const Card: React.FC<ICardProps> = ({ pokemon }) => {
+  const { navigate } = useNavigation();
   const [types, setTypes] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
-  const imageURL = `https://pokeres.bastionbot.org/images/pokemon/${pokemon.pokemonNumberUrl}.png`;
-  const { navigate } = useNavigation();
+  const formattedPokemonNumber = leftZeros(pokemon.pokemonNumberUrl, 3);
+  const getHexColor = getAllBackgroundByTypes(types);
+  const imageURL = `https://assets.pokemon.com/assets/cms2/img/pokedex/full/${formattedPokemonNumber}.png`;
+
   useEffect(() => {
     let isMounted = true;
 
@@ -41,6 +39,7 @@ const Card: React.FC<Props> = ({ pokemon }) => {
           setTypes(data);
         }
       } catch (error) {
+        Alert.alert(`${ERROR_LOADING_TYPES}`);
       } finally {
         if (isMounted) {
           setLoading(false);
@@ -53,11 +52,6 @@ const Card: React.FC<Props> = ({ pokemon }) => {
     };
   }, []);
 
-  const getType = types.map((item) => item);
-  const getColorByType = Object.entries(backgroundColors).filter((item) =>
-    item[0] === getType[0] ? item[1] : ""
-  );
-  const getHexColor = getColorByType.map((item) => item[1]);
   function handleGotoDetails(pokemon: IPokemonsProps): void {
     navigate("Details", {
       pokemon,
@@ -77,7 +71,7 @@ const Card: React.FC<Props> = ({ pokemon }) => {
           {/* Identificador de cada pokemon */}
           <PokemonIdentificatorContainer>
             <PokemonIdentificator>
-              #{leftZeros(pokemon.pokemonNumberUrl, 3)}
+              #{formattedPokemonNumber}
             </PokemonIdentificator>
             {/* Nome Pokemon */}
             <PokemonName>{pokemon.name}</PokemonName>
@@ -104,5 +98,3 @@ const Card: React.FC<Props> = ({ pokemon }) => {
     </Container>
   );
 };
-
-export default Card;

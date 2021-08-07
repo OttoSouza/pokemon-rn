@@ -1,25 +1,17 @@
 import React from "react";
 import { Container, Type } from "./styles";
-import { useTheme } from "styled-components/native";
 import { CustomIcon } from "../Icon";
-import { IPokemonType } from "../../interface";
+import { getAllColorByType } from "../../utils/getAllColorByType";
+import { IPokemonType } from "../../interface/ICustomIconProps";
 
-
-const Tag: React.FC<IPokemonType> = ({ type }) => {
-  const { colors } = useTheme();
-  
-  const getColorByType = Object.entries(colors).filter((item) =>
-    item[0] === type ? item[1] : ""
-  );
-
-  const getHexColor = getColorByType.map((item) => item[1]);
+export const Tag: React.FC<IPokemonType> = ({ type }) => {
+  const getHexColor = getAllColorByType(type);
 
   return (
     <Container style={{ backgroundColor: `${getHexColor}` }}>
-      <CustomIcon type={type}/>
+      <CustomIcon type={type} />
       <Type>{type}</Type>
     </Container>
   );
 };
 
-export default Tag;
