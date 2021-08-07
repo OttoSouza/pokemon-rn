@@ -1,0 +1,5 @@
+export const ERROR_LOADING_DATA = "Falha ao carregar pokemons, recarregue a aplicação!"
+export const ERROR_LOADING_TYPES = "Falha ao carregar os tipos dos pokemons, recarregue a aplicação!"
+export const ERROR_LOADING_SOME_EXTRA_INFORMATIONS = "Falha ao carregar a altura do pokemon, recarregue a aplicação!"
+export const ERROR_LOADING_ABILITIES = "Falha ao carregar as albilidades do pokemon, recarregue a aplicação!"
+export const ERROR_LOADING_STAT = "Falha ao carregar o stat do pokemon, recarregue a aplicação!"

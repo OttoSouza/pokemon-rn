@@ -2,10 +2,13 @@ import React from "react";
 import Lottie from "lottie-react-native";
 import { Container } from "./styles";
 import loadingPokebola from "../../assets/lf30_editor_cbcj38mi.json";
-import { ISVGAnimationProps } from "../../interface";
 
+interface ISVGAnimationProps {
+  width: number;
+  height: number;
+}
 
-const LoadAnimation: React.FC<ISVGAnimationProps>= ({height, width}) => {
+export const LoadAnimation: React.FC<ISVGAnimationProps>= ({height, width}) => {
   return (
     <Container>
       <Lottie
@@ -19,4 +22,4 @@ const LoadAnimation: React.FC<ISVGAnimationProps>= ({height, width}) => {
   );
 };
 
-export default LoadAnimation;
+

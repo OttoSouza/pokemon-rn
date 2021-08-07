@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Container, WrapperPokemon } from "./styles";
-import Input from "../../components/Input";
-import Card from "../../components/Card";
-import { FlatList, View } from "react-native";
-import { api } from "../../services/api";
+import { Alert, FlatList, View } from "react-native";
+import { Input } from "../../components/Input";
+import { Card } from "../../components/Card";
 import { Header } from "../../components/Header";
-import LoadAnimation from "../../components/LoadAnimation";
-import { IPokemonsProps } from "../../interface";
+import { LoadAnimation } from "../../components/LoadAnimation";
+
+import { api } from "../../services/api";
+
+import { ERROR_LOADING_DATA } from "../../Errors/messages";
+import { IPokemonsProps } from "../../interface/IPokemonsProps";
 
 export const Home: React.FC = () => {
   const [data, setData] = useState<IPokemonsProps[]>([]);
@@ -14,9 +17,14 @@ export const Home: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [searchName, setSearchName] = useState<string>("");
   const [page, setPage] = useState(1);
-  function inputVisible(): void {
+
+  function inputIsVisible(): void {
     setIsVisivle(!isVisible);
   }
+
+  const filterPokemon = data.filter((pokemon) =>
+    pokemon.name.toLowerCase().includes(searchName.toLocaleLowerCase())
+  );
 
   const loadPokemonData = async () => {
     try {
@@ -36,14 +44,9 @@ export const Home: React.FC = () => {
       setIsLoading(false);
     } catch (error) {
       console.log(error);
+      Alert.alert(`${ERROR_LOADING_DATA}`);
     }
   };
-
- 
-
-  const filterPokemon = data.filter((pok) =>
-    pok.name.toLowerCase().includes(searchName.toLocaleLowerCase())
-  );
 
   useEffect(() => {
     let isMounted = true;
@@ -59,7 +62,7 @@ export const Home: React.FC = () => {
 
   return (
     <Container>
-      <Header inputVisible={inputVisible} />
+      <Header inputIsVisible={inputIsVisible} />
       {isVisible ? (
         <Input
           placeholder="Digite o nome do pokemon"
@@ -73,7 +76,7 @@ export const Home: React.FC = () => {
       {isLoading ? (
         <LoadAnimation height={100} width={100} />
       ) : (
-        <WrapperPokemon isInputVisible={isVisible}>
+        <WrapperPokemon inputIsVisible={isVisible}>
           <FlatList
             showsVerticalScrollIndicator={false}
             data={filterPokemon}
@@ -87,7 +90,6 @@ export const Home: React.FC = () => {
             updateCellsBatchingPeriod={5}
             removeClippedSubviews={false}
             onEndReachedThreshold={0.1}
-            
           />
         </WrapperPokemon>
       )}

@@ -1,17 +1,23 @@
 import React from "react";
 
-import {Container,  ButtonIcon, Menu, Wrapper, Title, SubTitle,  } from "./styles";
+import {
+  Container,
+  ButtonIcon,
+  Menu,
+  Wrapper,
+  Title,
+  SubTitle,
+} from "./styles";
 import { Ionicons } from "@expo/vector-icons/";
+import { IHeaderProps } from "../../interface/IHeaderProps";
 
-interface Props {
-  inputVisible?: () => void;
-}
 
-export const Header: React.FC<Props> = ({ inputVisible }) => {
+
+export const Header: React.FC<IHeaderProps> = ({ inputIsVisible }) => {
   return (
     <Container>
       <Menu>
-        <ButtonIcon onPress={inputVisible}>
+        <ButtonIcon onPress={inputIsVisible}>
           <Ionicons name="filter" size={24} />
         </ButtonIcon>
       </Menu>
